@@ -1,0 +1,55 @@
+name: Deploy web
+
+# Expo-web-specific (or any react-native-web project with a static
+# `expo export --platform web` / equivalent bundler output). Publishes
+# to the gh-pages branch on every push to main, so the app is reachable
+# at https://<org>.github.io/<repo>/ instead of only build-checked in CI.
+#
+# Prerequisites (one-time, do these before/after the first run):
+# 1. `npm install --save-dev gh-pages` and add scripts:
+#      "predeploy": "expo export --platform web",
+#      "deploy": "gh-pages --nojekyll -d dist"
+# 2. Set `expo.experiments.baseUrl` in app.json to "/<repo-name>" so
+#    exported asset paths resolve under the Pages subpath.
+# 3. Add any EXPO_PUBLIC_* env vars the build needs as repo secrets
+#    (referenced below) — they get baked into the client bundle at
+#    build time, so they must be set before this workflow can produce a
+#    working deploy.
+# 4. After this workflow runs once and creates the gh-pages branch: repo
+#    Settings -> Pages -> Source: "Deploy from a branch" -> gh-pages / (root).
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Build and deploy to GitHub Pages
+        env:
+          # Add one env line per EXPO_PUBLIC_* var the build needs, e.g.:
+          # EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+          # EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+          PLACEHOLDER: "replace-this-env-block"
+        run: npm run deploy -- -u "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
