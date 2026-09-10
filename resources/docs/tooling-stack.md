@@ -32,9 +32,19 @@ between `oxlint` and `eslint` specifically:
 - **jest** (+ `jest-expo` preset on Expo projects, `@testing-library/react-native`
   for component tests) — unit/component tests, run with `--ci` in CI.
 - **knip** — dead-code / unused-exports / unused-deps scan. Point
-  `entry` at the actual app entry point(s) — `App.tsx` for Expo,
-  `index.js` + `App.tsx` for bare RN CLI (see `tooling/knip.expo.json` /
-  `tooling/knip.rn-cli.json`).
+  `entry` at the actual app entry point(s) — this depends on the
+  navigation setup, not just Expo vs. bare RN CLI:
+  - **Expo Router** (the default for `create-expo-app` since SDK 50 —
+    file-based routing under `app/`): entry is `expo-router/entry` plus
+    every file under `app/`, since each one is itself a route/layout
+    entry point. See `tooling/knip.expo-router.json`. Using the classic
+    `App.tsx`-only config here will make knip treat most of the app as
+    dead code — check `package.json`'s `"main"` field or for an `app/`
+    directory with `_layout.tsx` before picking a config.
+  - **Classic Expo** (no Expo Router, a single root `App.tsx`): entry is
+    `App.tsx`. See `tooling/knip.expo.json`.
+  - **Bare RN CLI**: entry is `index.js` + `App.tsx`. See
+    `tooling/knip.rn-cli.json`.
 
 ## The combined `lint` script
 

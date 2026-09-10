@@ -27,7 +27,9 @@ resources/
     oxlintrc.json, oxfmtrc.json
     eslint.config.expo.js              # + eslint-plugin-expo rules
     eslint.config.rn-cli.js            # bare RN CLI variant, no Expo plugin
-    knip.expo.json, knip.rn-cli.json
+    knip.expo.json                     # classic Expo (single App.tsx entry)
+    knip.expo-router.json              # Expo Router (file-based app/ entries)
+    knip.rn-cli.json
   ci/
     ci.expo.yml                        # type-check/lint/format/test/web-build/deadcode
     ci.rn-cli.yml                      # same minus web build; commented native build jobs

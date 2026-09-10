@@ -1,0 +1,6 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["expo-router/entry", "app/**/*.{js,jsx,ts,tsx}"],
+  "project": ["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}", "hooks/**/*.{ts,tsx}", "src/**/*.{ts,tsx}"],
+  "ignore": ["android/**", "ios/**", "dist/**", ".expo/**"]
+}
