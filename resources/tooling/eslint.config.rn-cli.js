@@ -1,6 +1,6 @@
-// Bare React Native CLI variant: same react-native plugin rules as the
-// Expo config, minus the eslint-plugin-expo rules (Expo-only APIs).
-// oxlint still runs first for the broad correctness rules.
+// Bare RN CLI variant: same react-native plugin rules as the Expo
+// config, minus eslint-plugin-expo. CJS require() below assumes no
+// "type": "module" — else rename to .cjs.
 const tsParser = require("@typescript-eslint/parser");
 const reactNative = require("eslint-plugin-react-native");
 

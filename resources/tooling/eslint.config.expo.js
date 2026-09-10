@@ -1,6 +1,5 @@
-// eslint covers the react-native/expo plugin rules oxlint doesn't have
-// equivalents for yet. Run oxlint first (fast, broad correctness rules),
-// then eslint for this narrower, RN/Expo-specific rule set.
+// Runs after oxlint, for RN/Expo-plugin rules oxlint doesn't cover.
+// CJS require() below assumes no "type": "module" — else rename to .cjs.
 const tsParser = require("@typescript-eslint/parser");
 const expo = require("eslint-plugin-expo");
 const reactNative = require("eslint-plugin-react-native");
