@@ -32,4 +32,11 @@ When adding any behavior or styling that differs between web and native:
 
 This applies to both Expo (`bundler: "metro"`) and bare React Native CLI
 projects using `react-native-web` — the `.web.tsx` resolution is a Metro
-behavior, not an Expo-specific feature.
+behavior, not an Expo-specific feature. **Caveat for bare RN CLI:**
+Expo's `@expo/metro-config` preset adds `"web"` to `resolver.platforms`
+for you; a bare RN CLI project's default `metro.config.js` does not
+include `web` as a platform out of the box. Confirm `web` is present in
+`resolver.platforms` (and that a web entry/dev-server is wired up) before
+relying on `.web.tsx` resolution on a bare CLI project — otherwise Metro
+will silently fall back to the default `.tsx` file and the split has no
+effect.
