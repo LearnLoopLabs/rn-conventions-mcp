@@ -6,6 +6,12 @@ between `oxlint` and `eslint` specifically:
 - **oxlint** — fast, broad-coverage linter (correctness rules,
   `react-hooks/rules-of-hooks`, `react-hooks/exhaustive-deps`). Run with
   `--deny-warnings` in CI so warnings fail the build, not just errors.
+  The `react-hooks/*` rules ride along with the `"react"` plugin entry
+  in `tooling/oxlintrc.json` rather than needing their own `"react-hooks"`
+  plugin entry — but this has moved around across oxlint releases, so
+  after installing, run `oxlint --print-config` (or just `oxlint .` and
+  check for an "unknown rule" warning) once to confirm the pinned version
+  actually resolves both rules before trusting CI green on them.
 - **eslint** — runs *after* oxlint, scoped narrowly to rules oxlint
   doesn't implement yet: `eslint-plugin-react-native` (color literals,
   inline styles, raw text, unused styles, sort-styles,
