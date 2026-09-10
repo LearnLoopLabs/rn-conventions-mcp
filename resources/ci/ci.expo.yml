@@ -22,6 +22,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Noisy on dev-only CVEs? Use --omit=dev --audit-level=high instead.
       - name: Audit dependencies
         run: npm audit --audit-level=high
 
