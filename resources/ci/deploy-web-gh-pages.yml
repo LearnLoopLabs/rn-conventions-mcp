@@ -47,9 +47,6 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Build and deploy to GitHub Pages
-        env:
-          # Add one env line per EXPO_PUBLIC_* var the build needs, e.g.:
-          # EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
-          # EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
-          PLACEHOLDER: "replace-this-env-block"
+        # env:
+        #   EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
         run: npm run deploy -- -u "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
