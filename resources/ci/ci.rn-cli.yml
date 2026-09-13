@@ -32,9 +32,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Format check
-        run: npm run format:check
-
+      # Formatting is enforced only by the pre-commit hook (see
+      # tooling-stack.md), not CI — a PR should never be blocked purely
+      # on formatting.
       - name: Test
         run: npm run test -- --ci
 
