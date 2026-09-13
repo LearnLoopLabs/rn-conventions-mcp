@@ -41,6 +41,19 @@ Every file under `resources/` is exposed as an MCP resource at
 `rn-conventions://<category>/<filename>`. A `list_conventions` tool lists
 them, optionally filtered by `category` (`docs` | `tooling` | `ci`).
 
+Two MCP prompts drive the two actual workflows this server is for:
+- `bootstrap-new-project` (arg: `projectType` —
+  `expo-router` | `classic-expo` | `bare-rn-cli`) — checklist for
+  scaffolding a brand-new project.
+- `retrofit-existing-project` — checklist for auditing an existing
+  project against these conventions and proposing an additive plan,
+  never a blind overwrite.
+
+Both start by checking `architecture-baseline.md`: New Architecture is
+assumed on (it's no longer a real choice on current RN versions), React
+Compiler is checked for rather than assumed, since it's still opt-in and
+changes how memoization should be handled.
+
 ## Setup
 
 ```bash

@@ -113,6 +113,107 @@ server.registerTool(
   },
 );
 
+server.registerPrompt(
+  "bootstrap-new-project",
+  {
+    title: "Bootstrap a new RN/Expo project",
+    description:
+      "Checklist for scaffolding conventions, tooling, and CI onto a brand-new React Native or Expo project.",
+    argsSchema: {
+      projectType: z
+        .enum(["expo-router", "classic-expo", "bare-rn-cli"])
+        .describe("Expo Router, classic Expo (no Router), or bare React Native CLI"),
+    },
+  },
+  ({ projectType }) => ({
+    messages: [
+      {
+        role: "user",
+        content: {
+          type: "text",
+          text: `Set up this new ${projectType} project using the rn-conventions MCP server:
+
+1. Read rn-conventions://docs/architecture-baseline.md first. New
+   Architecture is assumed on; ask whether React Compiler will be used
+   before writing any memoization-related tooling or docs.
+2. Pull and adapt the matching tooling templates for "${projectType}":
+   eslint config, oxlintrc.json, oxfmtrc.json, and the matching knip
+   config (knip.expo-router.json / knip.expo.json / knip.rn-cli.json) —
+   see rn-conventions://docs/tooling-stack.md for which knip variant
+   fits which project type.
+3. Wire up the pre-commit formatting hook from tooling-stack.md; do not
+   add a format-check step to CI.
+4. Add the matching CI workflow (ci.expo.yml or ci.rn-cli.yml) and, if
+   this is a web-capable Expo project, deploy-web-gh-pages.yml.
+5. Write CLAUDE.md following rn-conventions://docs/claude-md-style.md —
+   every claim must come from this project's actual files, not assumed.
+6. Apply rn-conventions://docs/commit-conventions.md and
+   rn-conventions://docs/ai-attribution.md defaults unless this project
+   states otherwise.
+7. If react-native-web is a dependency, apply the .web.tsx split from
+   rn-conventions://docs/react-native-web-platform-split.md.
+8. Apply rn-conventions://docs/comment-style.md and
+   rn-conventions://docs/ci-verification-policy.md as working
+   conventions for this session going forward.
+
+Call list_conventions first if you need the full current resource
+list — new resources may have been added since this prompt was
+written.`,
+        },
+      },
+    ],
+  }),
+);
+
+server.registerPrompt(
+  "retrofit-existing-project",
+  {
+    title: "Retrofit conventions onto an existing project",
+    description:
+      "Audit an existing React Native/Expo project against these conventions and propose an additive plan, not a blind overwrite.",
+    argsSchema: {},
+  },
+  () => ({
+    messages: [
+      {
+        role: "user",
+        content: {
+          type: "text",
+          text: `Audit this existing project against the rn-conventions MCP server's
+conventions, then propose changes — don't apply anything destructively
+without confirming first.
+
+1. Read the project's actual files first: package.json, existing lint/
+   format/CI config, CLAUDE.md (or README/ARCHITECTURE.md), and any
+   .cursor/rules or copilot-instructions. Don't assume anything from
+   the templates that isn't grounded in what's actually here.
+2. Read rn-conventions://docs/architecture-baseline.md and determine:
+   is New Architecture actually on (gradle.properties/Podfile/app.json)?
+   Is React Compiler present (babel.config.js, package.json)? State
+   both explicitly before touching any memoization- or native-module-
+   related convention.
+3. Diff the project's current oxlint/eslint/oxfmt/knip/CI setup against
+   this server's tooling templates (call list_conventions with category
+   "tooling" and "ci"). Report gaps and divergences — don't overwrite
+   an existing config that already does the same thing differently on
+   purpose.
+4. Check the knip entry-point config specifically against the project's
+   actual navigation setup (Expo Router vs. classic vs. bare CLI) per
+   rn-conventions://docs/tooling-stack.md — a mismatched entry point
+   produces false dead-code reports, not a working scan.
+5. Check whether CLAUDE.md exists and is current; if stale, update it
+   in place per rn-conventions://docs/claude-md-style.md rather than
+   replacing it wholesale.
+6. Report the full list of proposed additions/changes before making
+   any of them, grouped by risk (safe to add outright vs. needs a
+   decision from the project owner, e.g. changing an existing CI
+   check).`,
+        },
+      },
+    ],
+  }),
+);
+
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
