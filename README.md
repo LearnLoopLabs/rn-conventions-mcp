@@ -1,6 +1,11 @@
 # rn-conventions-mcp
 
-A local MCP server that exposes personal React Native / Expo project
+[![npm version](https://img.shields.io/npm/v/rn-conventions-mcp)](https://www.npmjs.com/package/rn-conventions-mcp)
+[![license](https://img.shields.io/npm/l/rn-conventions-mcp)](LICENSE)
+
+Install / usage page: https://learnlooplabs.github.io/rn-conventions-mcp/
+
+An MCP server that exposes personal React Native / Expo project
 conventions as resources: commit & branch conventions, the AI-attribution
 default, the CI-verification policy, the `.web.tsx` platform-split rule,
 code comment style, CLAUDE.md writing style, and reusable tooling/CI
@@ -67,7 +72,7 @@ npm run build
 From the target project's directory:
 
 ```bash
-claude mcp add rn-conventions -- node /Users/arberhaxhimusa/Desktop/Dev/rn-conventions-mcp/dist/index.js
+claude mcp add rn-conventions -- npx -y rn-conventions-mcp
 ```
 
 That registers it as a project-scoped (or pass `-s user` for a
@@ -78,6 +83,29 @@ adapt filenames/paths to the target project rather than dropping them in
 verbatim, since e.g. `knip.expo.json` vs `knip.rn-cli.json` assumes a
 specific entry point.
 
+For other MCP clients (Claude Desktop, etc.), add to the client's MCP
+config instead:
+
+```json
+{
+  "mcpServers": {
+    "rn-conventions": {
+      "command": "npx",
+      "args": ["-y", "rn-conventions-mcp"]
+    }
+  }
+}
+```
+
+### Local development
+
+To point at a local checkout instead of the published package (e.g. while
+editing conventions before a release):
+
+```bash
+claude mcp add rn-conventions -- node /Users/arberhaxhimusa/Desktop/Dev/rn-conventions-mcp/dist/index.js
+```
+
 ## Updating
 
 These are point-in-time snapshots, not synced automatically from any
@@ -87,3 +115,16 @@ corresponding file here by hand (`resources/docs/*.md` for rules,
 (`npm run build`) — MCP clients pick up resource content changes on next
 read, no reconnect needed for content, though a client may need to
 reconnect to see newly *added* resources.
+
+## Releasing
+
+Publishing to npm is automated via [`.github/workflows/publish.yml`](.github/workflows/publish.yml),
+triggered on any `v*` tag push:
+
+```bash
+npm version patch   # or minor/major — bumps package.json and creates a git tag
+git push --follow-tags
+```
+
+Requires an `NPM_TOKEN` (npm Automation token) configured as a repo
+secret under Settings → Secrets and variables → Actions.

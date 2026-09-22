@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>rn-conventions-mcp</title>
+<meta name="description" content="MCP server exposing React Native / Expo project conventions — commit style, CI/CD templates, tooling configs — as resources and prompts for any MCP client." />
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #f5f5f7;
+    --text: #1a1a1e;
+    --text-muted: #55555c;
+    --border: #e2e2e6;
+    --accent: #3a5ee8;
+    --code-bg: #1a1a1e;
+    --code-text: #f0f0f2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16161a;
+      --bg-alt: #1e1e23;
+      --text: #ececef;
+      --text-muted: #a3a3ab;
+      --border: #2e2e35;
+      --accent: #7f9dff;
+      --code-bg: #0f0f12;
+      --code-text: #ececef;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #16161a;
+    --bg-alt: #1e1e23;
+    --text: #ececef;
+    --text-muted: #a3a3ab;
+    --border: #2e2e35;
+    --accent: #7f9dff;
+    --code-bg: #0f0f12;
+    --code-text: #ececef;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 16px 96px;
+  }
+  header {
+    margin-bottom: 40px;
+  }
+  h1 {
+    font-size: 1.9rem;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .tagline {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    margin: 0;
+  }
+  .badges {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .badges img { display: block; height: 20px; }
+  h2 {
+    font-size: 1.25rem;
+    margin: 40px 0 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  p { color: var(--text); }
+  code {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.1em 0.4em;
+    font-size: 0.9em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: -1px;
+  }
+  .tab-btn {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    color: var(--text-muted);
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .tab-btn[aria-selected="true"] {
+    color: var(--text);
+    background: var(--code-bg);
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .tab-panel pre { border-radius: 0 8px 8px 8px; margin-top: 0; }
+  ul { padding-left: 1.2em; }
+  li { margin-bottom: 6px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: var(--bg-alt);
+  }
+  .card h3 {
+    margin: 0 0 6px;
+    font-size: 0.95rem;
+  }
+  .card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  footer {
+    margin-top: 56px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--accent); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>rn-conventions-mcp</h1>
+    <p class="tagline">An MCP server exposing personal React Native / Expo project conventions — commit style, CI/CD templates, tooling configs — for reuse across projects via any MCP client.</p>
+    <div class="badges">
+      <a href="https://www.npmjs.com/package/rn-conventions-mcp"><img src="https://img.shields.io/npm/v/rn-conventions-mcp" alt="npm version" /></a>
+      <a href="https://github.com/LearnLoopLabs/rn-conventions-mcp/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/rn-conventions-mcp" alt="license" /></a>
+    </div>
+  </header>
+
+  <section>
+    <h2>Install</h2>
+    <div class="tabs" role="tablist">
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="cli">Claude Code CLI</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="json">JSON config (Claude Desktop, etc.)</button>
+    </div>
+    <div class="tab-panel active" data-panel="cli">
+      <pre><code>claude mcp add rn-conventions -- npx -y rn-conventions-mcp</code></pre>
+      <p>Add <code>-s user</code> to register it once for every project on your machine instead of just the current one.</p>
+    </div>
+    <div class="tab-panel" data-panel="json">
+      <pre><code>{
+  "mcpServers": {
+    "rn-conventions": {
+      "command": "npx",
+      "args": ["-y", "rn-conventions-mcp"]
+    }
+  }
+}</code></pre>
+      <p>Drop this into your client's MCP config (e.g. <code>claude_desktop_config.json</code>).</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>What's inside</h2>
+    <p>Every file under <code>resources/</code> is exposed as an MCP resource at <code>rn-conventions://&lt;category&gt;/&lt;filename&gt;</code>. A <code>list_conventions</code> tool lists them, optionally filtered by category.</p>
+    <div class="grid">
+      <div class="card">
+        <h3>docs/</h3>
+        <p>Commit &amp; branch conventions, AI-attribution policy, CI-verification policy, the <code>.web.tsx</code> platform-split rule, comment style, CLAUDE.md style, tooling-stack rationale, architecture baseline.</p>
+      </div>
+      <div class="card">
+        <h3>tooling/</h3>
+        <p>oxlint, oxfmt, ESLint (Expo and bare RN CLI variants), and knip configs for classic Expo, Expo Router, and bare RN CLI.</p>
+      </div>
+      <div class="card">
+        <h3>ci/</h3>
+        <p>GitHub Actions workflows: type-check/lint/format/test/web-build/deadcode for Expo and RN CLI, plus a GitHub Pages web-deploy workflow.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Prompts</h2>
+    <ul>
+      <li><code>bootstrap-new-project</code> (arg: <code>projectType</code> — <code>expo-router</code> | <code>classic-expo</code> | <code>bare-rn-cli</code>) — checklist for scaffolding a brand-new project against these conventions.</li>
+      <li><code>retrofit-existing-project</code> — checklist for auditing an existing project and proposing an additive plan, never a blind overwrite.</li>
+    </ul>
+    <p>Both start by checking <code>architecture-baseline.md</code>: New Architecture is assumed on, React Compiler is checked for rather than assumed.</p>
+  </section>
+
+  <footer>
+    <a href="https://github.com/LearnLoopLabs/rn-conventions-mcp">Source on GitHub</a> ·
+    <a href="https://www.npmjs.com/package/rn-conventions-mcp">Package on npm</a>
+  </footer>
+</main>
+<script>
+  try {
+    var buttons = document.querySelectorAll(".tab-btn");
+    buttons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        buttons.forEach(function (b) { b.setAttribute("aria-selected", "false"); });
+        document.querySelectorAll(".tab-panel").forEach(function (p) { p.classList.remove("active"); });
+        btn.setAttribute("aria-selected", "true");
+        document.querySelector('.tab-panel[data-panel="' + btn.dataset.tab + '"]').classList.add("active");
+      });
+    });
+  } catch (e) {}
+</script>
+</body>
+</html>

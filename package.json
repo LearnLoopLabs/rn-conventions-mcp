@@ -1,12 +1,33 @@
 {
   "name": "rn-conventions-mcp",
   "version": "1.0.0",
-  "private": true,
   "description": "MCP server exposing personal React Native / Expo project conventions (commit style, CLAUDE.md doc style, CI/CD templates, tooling configs) for reuse across projects",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
     "rn-conventions-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "resources",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "react-native",
+    "expo",
+    "conventions"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LearnLoopLabs/rn-conventions-mcp.git"
+  },
+  "homepage": "https://learnlooplabs.github.io/rn-conventions-mcp/",
+  "bugs": {
+    "url": "https://github.com/LearnLoopLabs/rn-conventions-mcp/issues"
   },
   "scripts": {
     "build": "tsc",
