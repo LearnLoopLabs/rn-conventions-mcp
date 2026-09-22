@@ -118,16 +118,35 @@ reconnect to see newly *added* resources.
 
 ## Releasing
 
-Publishing to npm is automated via [`.github/workflows/publish.yml`](.github/workflows/publish.yml),
-triggered on any `v*` tag push:
+Publishing to npm after the first release is automated via
+[`.github/workflows/publish.yml`](.github/workflows/publish.yml), triggered
+on any `v*` tag push:
 
 ```bash
 npm version patch   # or minor/major — bumps package.json and creates a git tag
 git push --follow-tags
 ```
 
-Uses npm [Trusted Publishing](https://docs.npmjs.com/trusted-publishers) —
-no long-lived token stored in the repo. One-time setup on npmjs.com, under
-the package's Settings → Trusted Publisher: add a GitHub Actions publisher
-pointing at `LearnLoopLabs/rn-conventions-mcp`, workflow file
-`publish.yml`.
+It uses npm [Trusted Publishing](https://docs.npmjs.com/trusted-publishers)
+(OIDC) — no long-lived token stored in the repo.
+
+### First release (one-time, manual)
+
+Trusted Publishing can only be configured for a package that already
+exists on the registry, so the very first version has to be published by
+hand:
+
+```bash
+npm login
+npm run build
+npm publish --access public
+```
+
+Then, on npmjs.com, go to the package's Settings → Trusted Publisher and
+add a GitHub Actions publisher:
+- Organization/user: `LearnLoopLabs`
+- Repository: `rn-conventions-mcp`
+- Workflow filename: `publish.yml`
+
+Every release after that goes through the `npm version` + tag-push flow
+above with no further manual steps.
