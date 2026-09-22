@@ -21,5 +21,8 @@ jobs:
       # bundled with setup-node can lag behind.
       - run: npm install -g npm@latest
       - run: npm ci
+      # The pushed tag (e.g. v1.2.3) is the source of truth for the
+      # published version, not the committed package.json.
+      - run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version --allow-same-version
       - run: npm run build
       - run: npm publish --access public

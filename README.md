@@ -124,27 +124,20 @@ reconnect to see newly *added* resources.
   [`.github/workflows/publish.yml`](.github/workflows/publish.yml),
   triggered on pushing a `v*` tag. It uses npm
   [Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (OIDC) —
-  no long-lived token stored in the repo.
+  no long-lived token stored in the repo. The tag is the source of truth
+  for the published version: CI sets `package.json`'s version to match
+  the tag (stripping the leading `v`) right before publishing, so
+  `package.json` on `main` doesn't need a manual version bump/commit.
 - **GitHub Releases** are created manually, via the GitHub UI (Releases →
   Draft a new release) rather than by CI — that's what actually creates
   the tag that triggers the npm publish above.
 
 Release steps:
-1. Bump `package.json`'s version and push to `main`:
-   ```bash
-   npm version patch --no-git-tag-version   # or minor/major
-   git add package.json package-lock.json
-   git commit -m "chore: bump version to <new version>"
-   git push
-   ```
-2. On GitHub → Releases → **Draft a new release** → type a **new tag**
-   matching that version exactly (e.g. `v1.0.3`) → target `main` →
+1. On GitHub → Releases → **Draft a new release** → type a **new tag**
+   for the version you want (e.g. `v1.0.3`) → target `main` →
    **Generate release notes** → **Publish release**.
-3. Publishing the release creates the tag, which triggers CI to build and
-   publish that version to npm.
-
-The tag name and `package.json`'s version must match, or the npm package
-that gets published won't correspond to the tag/release name.
+2. Publishing the release creates the tag, which triggers CI to build and
+   publish exactly that version to npm.
 
 ### First release (one-time, manual)
 
