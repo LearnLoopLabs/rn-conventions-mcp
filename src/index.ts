@@ -123,6 +123,42 @@ server.registerTool(
   },
 );
 
+server.registerTool(
+  "get_convention",
+  {
+    title: "Get a convention's content",
+    description:
+      "Return the full text of one convention resource by id, as printed by list_conventions (e.g. \"docs/architecture-baseline.md\").",
+    inputSchema: {
+      id: z.string().describe("Resource id, e.g. docs/architecture-baseline.md"),
+    },
+  },
+  async ({ id }) => {
+    const resource = resources.find((r) => r.id === id);
+
+    if (!resource) {
+      return {
+        isError: true,
+        content: [
+          {
+            type: "text",
+            text: `No convention found for id "${id}". Call list_conventions to see valid ids.`,
+          },
+        ],
+      };
+    }
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: readFileSync(resource.filePath, "utf-8"),
+        },
+      ],
+    };
+  },
+);
+
 server.registerPrompt(
   "bootstrap-new-project",
   {
