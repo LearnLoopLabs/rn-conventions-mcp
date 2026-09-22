@@ -2,15 +2,16 @@
 
 [![npm version](https://img.shields.io/npm/v/rn-conventions-mcp?cacheSeconds=300)](https://www.npmjs.com/package/rn-conventions-mcp)
 [![license](https://img.shields.io/npm/l/rn-conventions-mcp?cacheSeconds=300)](LICENSE)
+[![CI](https://github.com/LearnLoopLabs/rn-conventions-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/LearnLoopLabs/rn-conventions-mcp/actions/workflows/ci.yml)
 
 Install / usage page: https://learnlooplabs.github.io/rn-conventions-mcp/
 
 An MCP server that exposes personal React Native / Expo project
 conventions as resources: commit & branch conventions, the AI-attribution
-default, the CI-verification policy, the `.web.tsx` platform-split rule,
-code comment style, CLAUDE.md writing style, and reusable tooling/CI
-templates (oxlint, oxfmt, eslint, knip, CI workflow YAML, a GitHub Pages
-web-deploy workflow).
+default, the local-verification preference, the `.web.tsx` platform-split
+rule, code comment style, CLAUDE.md writing style, and reusable
+tooling/CI templates (oxlint, oxfmt, eslint, knip, CI workflow YAML, a
+GitHub Pages web-deploy workflow).
 
 Point-in-time snapshot of what's already wired up on
 [mobile-portofolio](https://github.com/arberhh/mobile-portofolio),
@@ -75,6 +76,7 @@ changes how memoization should be handled.
 ```bash
 npm install
 npm run build
+npm test
 ```
 
 ## Use in another project
