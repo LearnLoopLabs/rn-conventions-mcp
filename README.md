@@ -126,5 +126,8 @@ npm version patch   # or minor/major — bumps package.json and creates a git ta
 git push --follow-tags
 ```
 
-Requires an `NPM_TOKEN` (npm Automation token) configured as a repo
-secret under Settings → Secrets and variables → Actions.
+Uses npm [Trusted Publishing](https://docs.npmjs.com/trusted-publishers) —
+no long-lived token stored in the repo. One-time setup on npmjs.com, under
+the package's Settings → Trusted Publisher: add a GitHub Actions publisher
+pointing at `LearnLoopLabs/rn-conventions-mcp`, workflow file
+`publish.yml`.
