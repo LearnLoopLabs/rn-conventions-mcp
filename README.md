@@ -118,19 +118,15 @@ reconnect to see newly *added* resources.
 
 ## Releasing
 
-Every merge to `main` is a release candidate:
 - **GitHub Pages** (`docs/`) redeploys automatically on every push to
   `main` — no workflow needed for that part.
 - **npm** publishing is handled by
-  [`.github/workflows/publish.yml`](.github/workflows/publish.yml), also
-  triggered on every push to `main`. It compares `package.json`'s
-  `version` against what's currently live on npm; if you didn't bump it,
-  the publish steps are skipped (a no-op, not a failure). So: bump the
-  version as part of a PR when you want a release, don't when you don't.
+  [`.github/workflows/publish.yml`](.github/workflows/publish.yml),
+  triggered on pushing a `v*` tag:
 
 ```bash
-npm version patch   # or minor/major — bumps package.json (and package-lock.json)
-git push
+npm version patch   # or minor/major — bumps package.json and creates a git tag
+git push --follow-tags
 ```
 
 It uses npm [Trusted Publishing](https://docs.npmjs.com/trusted-publishers)
@@ -154,5 +150,5 @@ add a GitHub Actions publisher:
 - Repository: `rn-conventions-mcp`
 - Workflow filename: `publish.yml`
 
-Every release after that goes through the version-bump-and-merge flow
+Every release after that goes through the `npm version` + tag-push flow
 above with no further manual steps.

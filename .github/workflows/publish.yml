@@ -2,8 +2,8 @@ name: Publish to npm
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v*"
 
 jobs:
   publish:
@@ -17,26 +17,9 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
-
-      - name: Check if package.json version is unpublished
-        id: version-check
-        run: |
-          LOCAL_VERSION=$(node -p "require('./package.json').version")
-          PUBLISHED_VERSION=$(npm view rn-conventions-mcp version 2>/dev/null || echo "none")
-          echo "local version: $LOCAL_VERSION, published version: $PUBLISHED_VERSION"
-          if [ "$LOCAL_VERSION" != "$PUBLISHED_VERSION" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          fi
-
       # Trusted Publishing (OIDC) requires a recent npm CLI; the version
       # bundled with setup-node can lag behind.
       - run: npm install -g npm@latest
-        if: steps.version-check.outputs.changed == 'true'
       - run: npm ci
-        if: steps.version-check.outputs.changed == 'true'
       - run: npm run build
-        if: steps.version-check.outputs.changed == 'true'
       - run: npm publish --access public
-        if: steps.version-check.outputs.changed == 'true'
