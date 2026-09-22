@@ -318,7 +318,7 @@ server.registerPrompt(
 7. If react-native-web is a dependency, apply the .web.tsx split from
    rn-conventions://docs/react-native-web-platform-split.md.
 8. Apply rn-conventions://docs/comment-style.md and
-   rn-conventions://docs/ci-verification-policy.md as working
+   rn-conventions://docs/local-verification-preference.md as working
    conventions for this session going forward.
 
 Call list_conventions first if you need the full current resource

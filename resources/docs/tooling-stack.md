@@ -66,6 +66,11 @@ of issues; eslint then only has to check its narrower rule set.
 ## Where these run
 
 All of the above run in CI (see `ci/ci.expo.yml` / `ci/ci.rn-cli.yml`),
-gated on every PR and push to `main`. See `docs/ci-verification-policy.md`
-for why they should *not* also be re-run locally as a post-task
-verification step.
+gated on every PR and push to `main`. See
+`docs/local-verification-preference.md` for why they're best not also
+re-run locally as a post-task verification step.
+
+The knip `project` globs above (`components/`, `hooks/`, `src/`) are a
+starting template, not a fixed schema — adjust them to the project's
+actual directory structure (e.g. `packages/`, `features/`, `screens/`)
+rather than assuming this exact layout.

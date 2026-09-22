@@ -1,31 +1,36 @@
-# New Architecture and React Compiler: what to assume, what to ask
+# New Architecture and React Compiler: check, don't assume
 
-Two RN/React changes that alter other conventions in this server —
-handled differently because one is no longer a real choice and the
-other still is.
+Two RN/React changes that alter other conventions in this server. Both
+are checks against the project's actual state (use `inspect_project`),
+not hardcoded assumptions — an MCP meant to prevent stale RN knowledge
+shouldn't itself bake in version-specific assumptions that go stale.
 
-## New Architecture (Fabric + TurboModules): assume it, don't ask
+## New Architecture (Fabric + TurboModules): check, don't assume
 
-On any current React Native version, Old Architecture is not a
-meaningful fallback — Meta has been removing it from the RN codebase
-across recent releases, not just defaulting it off. Treat it as the
-only architecture, not a flag to check:
+Old Architecture is being phased out of React Native — Meta has been
+removing it from the codebase across recent releases, not just
+defaulting it off — so New Architecture is very likely already on. Still
+confirm rather than assume: `newArchEnabled=true` in
+`android/gradle.properties`, the iOS equivalent in the Podfile /
+`RCT_NEW_ARCH_ENABLED` env var, or (Expo) `newArchEnabled` in `app.json`.
+`inspect_project` reports this directly.
+
+Once confirmed on, treat it as the only architecture for this project,
+not a flag to keep re-checking:
 
 - Native modules: TurboModule specs (Codegen, typed spec files), never
   the legacy `NativeModules`/bridge pattern.
 - Native UI components: Fabric components via Codegen, never
   `requireNativeComponent` against the old bridge.
-- Animation/gesture libraries: pick versions built for it —
-  `react-native-reanimated` 3+, `react-native-gesture-handler` 2+ — both
-  assume direct JSI access, not the old async bridge.
 - Before adding any native-code third-party dependency, check it
   supports Fabric/TurboModules — some smaller/abandoned libraries never
   migrated and will not work at all, not just suboptimally.
-- Confirm it's actually on: `newArchEnabled=true` in
-  `android/gradle.properties`, and the iOS equivalent in the Podfile /
-  `RCT_NEW_ARCH_ENABLED` env var (Expo: `newArchEnabled` in `app.json`,
-  or the default on current SDKs). On a project new enough that this is
-  even configurable, there's rarely a reason to turn it off.
+- Animation/gesture libraries (`react-native-reanimated`,
+  `react-native-gesture-handler`, etc.): pick a version documented as
+  supporting Fabric/TurboModules — check the library's current
+  docs/changelog rather than assuming a specific major version, since
+  the minimum version needed shifts over time as older majors drop
+  bridge support entirely.
 
 ## React Compiler: check, don't assume
 
