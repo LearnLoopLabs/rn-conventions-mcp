@@ -1,7 +1,7 @@
 # rn-conventions-mcp
 
-[![npm version](https://img.shields.io/npm/v/rn-conventions-mcp)](https://www.npmjs.com/package/rn-conventions-mcp)
-[![license](https://img.shields.io/npm/l/rn-conventions-mcp)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/rn-conventions-mcp?cacheSeconds=300)](https://www.npmjs.com/package/rn-conventions-mcp)
+[![license](https://img.shields.io/npm/l/rn-conventions-mcp?cacheSeconds=300)](LICENSE)
 
 Install / usage page: https://learnlooplabs.github.io/rn-conventions-mcp/
 
