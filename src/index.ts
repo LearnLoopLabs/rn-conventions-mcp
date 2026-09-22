@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { extname, join, relative } from "node:path";
+import { readdirSync, readFileSync } from "node:fs";
+import { extname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
@@ -26,28 +26,36 @@ interface ConventionResource {
 }
 
 function collectResources(dir: string, baseDir: string): ConventionResource[] {
-  const entries = readdirSync(dir);
+  const entries = readdirSync(dir, { withFileTypes: true });
   const results: ConventionResource[] = [];
 
   for (const entry of entries) {
-    if (entry.startsWith(".")) continue;
+    if (entry.name.startsWith(".")) continue;
 
-    const fullPath = join(dir, entry);
-    if (statSync(fullPath).isDirectory()) {
+    const fullPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
       results.push(...collectResources(fullPath, baseDir));
       continue;
     }
 
-    const relPath = relative(baseDir, fullPath);
+    // Only expose recognized convention file types — anything else
+    // dropped under resources/ (notes, scratch files, etc.) is skipped
+    // rather than silently published as text/plain.
+    const ext = extname(entry.name);
+    if (!(ext in MIME_BY_EXT)) continue;
+
+    // relative() uses the OS path separator, so this must be normalized
+    // to "/" before splitting into a category — otherwise category
+    // detection breaks entirely on Windows.
+    const relPath = relative(baseDir, fullPath).split(sep).join("/");
     const category = relPath.split("/")[0] ?? "misc";
-    const ext = extname(entry);
 
     results.push({
-      id: relPath.replace(/\\/g, "/"),
+      id: relPath,
       category,
-      title: entry,
+      title: entry.name,
       filePath: fullPath,
-      mimeType: MIME_BY_EXT[ext] ?? "text/plain",
+      mimeType: MIME_BY_EXT[ext],
     });
   }
 
