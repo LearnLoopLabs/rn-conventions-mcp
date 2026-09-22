@@ -24,7 +24,7 @@ resources/
   docs/
     commit-conventions.md              # type prefixes, branch naming, ticket IDs
     ai-attribution.md                  # default: no AI attribution in commits/PRs
-    ci-verification-policy.md          # don't re-run checks locally after a task
+    local-verification-preference.md   # prefer targeted checks over a redundant full re-run
     react-native-web-platform-split.md # .web.tsx over inline Platform.OS checks
     comment-style.md                   # avoid verbose doc-blocks, self-documenting code
     claude-md-style.md                 # how to write a project's CLAUDE.md
