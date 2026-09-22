@@ -30,6 +30,8 @@ function collectResources(dir: string, baseDir: string): ConventionResource[] {
   const results: ConventionResource[] = [];
 
   for (const entry of entries) {
+    if (entry.startsWith(".")) continue;
+
     const fullPath = join(dir, entry);
     if (statSync(fullPath).isDirectory()) {
       results.push(...collectResources(fullPath, baseDir));
