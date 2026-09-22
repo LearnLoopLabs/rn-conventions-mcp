@@ -1,3 +1,6 @@
+# Template — verify these npm scripts (ts:check, lint, test, deadcode)
+# actually exist in the target project's package.json before wiring
+# this workflow in wholesale; adjust or drop steps that don't apply.
 name: CI
 
 on:
