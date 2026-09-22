@@ -24,6 +24,7 @@ resources/
     comment-style.md                   # avoid verbose doc-blocks, self-documenting code
     claude-md-style.md                 # how to write a project's CLAUDE.md
     tooling-stack.md                   # oxlint/eslint/oxfmt/tsc/jest/knip, why this split
+    architecture-baseline.md           # New Arch: assumed on. React Compiler: check, don't assume.
   tooling/
     oxlintrc.json, oxfmtrc.json
     eslint.config.expo.js              # + eslint-plugin-expo rules
