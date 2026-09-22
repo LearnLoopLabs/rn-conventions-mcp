@@ -19,10 +19,12 @@ between `oxlint` and `eslint` specifically:
   `eslint-plugin-expo` (`use-dom-exports`, `no-env-var-destructuring`,
   `no-dynamic-env-var`). Run with `--max-warnings=0`. See
   `tooling/eslint.config.expo.js` / `tooling/eslint.config.rn-cli.js`.
-- **oxfmt** — formatter (`oxfmt .` to write, `oxfmt --check .` for CI).
-  Wire it into a pre-commit hook so staged files are formatted before
-  they're committed, rather than relying on CI to catch formatting
-  drift after the fact:
+- **oxfmt** — formatter (`oxfmt .` to write). Enforced only via a
+  pre-commit hook, deliberately **not** as a CI step — a PR should never
+  be blockable purely on formatting when the hook already normalizes
+  every commit before it lands. `format:check` is still worth keeping
+  as an `npm` script for manual/CI-debugging use, it's just not wired
+  into `ci/ci.expo.yml` / `ci/ci.rn-cli.yml`.
 
   ```sh
   # .githooks/pre-commit, installed via `npm run prepare` running
