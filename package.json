@@ -1,6 +1,6 @@
 {
   "name": "rn-conventions-mcp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MCP server exposing personal React Native / Expo project conventions (commit style, CLAUDE.md doc style, CI/CD templates, tooling configs) for reuse across projects",
   "type": "module",
   "main": "dist/index.js",
