@@ -122,15 +122,29 @@ reconnect to see newly *added* resources.
   `main` — no workflow needed for that part.
 - **npm** publishing is handled by
   [`.github/workflows/publish.yml`](.github/workflows/publish.yml),
-  triggered on pushing a `v*` tag:
+  triggered on pushing a `v*` tag. It uses npm
+  [Trusted Publishing](https://docs.npmjs.com/trusted-publishers) (OIDC) —
+  no long-lived token stored in the repo.
+- **GitHub Releases** are created manually, via the GitHub UI (Releases →
+  Draft a new release) rather than by CI — that's what actually creates
+  the tag that triggers the npm publish above.
 
-```bash
-npm version patch   # or minor/major — bumps package.json and creates a git tag
-git push --follow-tags
-```
+Release steps:
+1. Bump `package.json`'s version and push to `main`:
+   ```bash
+   npm version patch --no-git-tag-version   # or minor/major
+   git add package.json package-lock.json
+   git commit -m "chore: bump version to <new version>"
+   git push
+   ```
+2. On GitHub → Releases → **Draft a new release** → type a **new tag**
+   matching that version exactly (e.g. `v1.0.3`) → target `main` →
+   **Generate release notes** → **Publish release**.
+3. Publishing the release creates the tag, which triggers CI to build and
+   publish that version to npm.
 
-It uses npm [Trusted Publishing](https://docs.npmjs.com/trusted-publishers)
-(OIDC) — no long-lived token stored in the repo.
+The tag name and `package.json`'s version must match, or the npm package
+that gets published won't correspond to the tag/release name.
 
 ### First release (one-time, manual)
 
@@ -150,5 +164,6 @@ add a GitHub Actions publisher:
 - Repository: `rn-conventions-mcp`
 - Workflow filename: `publish.yml`
 
-Every release after that goes through the `npm version` + tag-push flow
-above with no further manual steps.
+Every release after that goes through the release-steps flow above —
+already done once, kept here in case Trusted Publishing ever needs to be
+reconfigured.
