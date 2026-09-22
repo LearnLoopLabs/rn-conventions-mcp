@@ -50,6 +50,13 @@ a `get_convention` tool returns one resource's full text by `id` — useful
 for MCP clients where reading a resource directly is less reliable than
 a tool call.
 
+An `inspect_project` tool does best-effort detection of the *calling*
+project's actual setup — framework, Expo Router, RN/Expo versions, New
+Architecture, React Compiler, package manager, TypeScript, Jest — from
+files in the current working directory (`package.json`, `app.json`,
+`babel.config.js`, `android/gradle.properties`, etc.), so conventions get
+applied based on what's actually there instead of assumed.
+
 Two MCP prompts drive the two actual workflows this server is for:
 - `bootstrap-new-project` (arg: `projectType` —
   `expo-router` | `classic-expo` | `bare-rn-cli`) — checklist for
