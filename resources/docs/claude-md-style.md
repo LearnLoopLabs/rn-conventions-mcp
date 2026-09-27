@@ -20,9 +20,10 @@ with code in this repository.
    for type-check, lint, format/format-check, test (+ how to run a single
    test file), dead-code scan, and any build/export step. Pull these
    verbatim from `package.json`, don't paraphrase them.
-   - If the project has a "don't run checks after finishing, CI does it"
-     policy, state it here — see the `ci-verification-policy` resource
-     for the exact wording/rationale to adapt.
+   - If the project has a "prefer targeted checks over a redundant full
+     re-run" preference, state it here — see the
+     `local-verification-preference` resource for the exact
+     wording/rationale to adapt.
 2. **Architecture** — organized by subsystem, not by directory listing:
    - **Data flow**: where the API/backend client is instantiated, what
      the one data-fetching pattern is (hook, service layer, whatever it

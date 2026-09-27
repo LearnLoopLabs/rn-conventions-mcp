@@ -1,16 +1,18 @@
-# CI verification policy
+# Local verification preference
 
-**Don't run the full check suite (lint, format check, type check, tests,
-build, dead-code scan) after finishing a task — CI runs them on every
-push/PR.** Re-running them locally after the fact just burns tokens
-re-producing output CI will produce anyway.
+**Prefer targeted verification during implementation; avoid re-running
+the full check suite (lint, format check, type check, tests, build,
+dead-code scan) as a redundant final step once a task is done, unless
+the user asks for it.** This assumes CI is already wired up to run these
+checks on every push/PR — re-producing that output locally after the
+fact burns tokens without surfacing anything CI won't already catch.
 
 ## What this means concretely
 
-- Do not run `lint` / `format:check` / `ts:check` / `test` / a full
-  build / dead-code (`knip`) commands, or start the dev server, as a
+- Avoid running `lint` / `format:check` / `ts:check` / `test` / a full
+  build / dead-code (`knip`) commands, or starting the dev server, as a
   final "let me verify everything's fine" step once a task is done.
-- Do not run `expo start` / `npm run ios` / `npm run android` /
+- Avoid running `expo start` / `npm run ios` / `npm run android` /
   `npm run web` (or a bare-RN-CLI equivalent) as a wrap-up sanity check
   unless the user explicitly asked to see the app running.
 
