@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { extname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -60,6 +60,104 @@ function collectResources(dir: string, baseDir: string): ConventionResource[] {
   }
 
   return results;
+}
+
+function readJsonSafe(path: string): Record<string, unknown> | undefined {
+  try {
+    return JSON.parse(readFileSync(path, "utf-8"));
+  } catch {
+    return undefined;
+  }
+}
+
+function readTextSafe(path: string): string | undefined {
+  try {
+    return readFileSync(path, "utf-8");
+  } catch {
+    return undefined;
+  }
+}
+
+function detectPackageManager(cwd: string): "npm" | "yarn" | "pnpm" | "bun" | "unknown" {
+  if (existsSync(join(cwd, "bun.lockb"))) return "bun";
+  if (existsSync(join(cwd, "pnpm-lock.yaml"))) return "pnpm";
+  if (existsSync(join(cwd, "yarn.lock"))) return "yarn";
+  if (existsSync(join(cwd, "package-lock.json"))) return "npm";
+  return "unknown";
+}
+
+// Checked in order of how reliably each source reflects the actual
+// build, not just intent: app.json/app.config are Expo's own source of
+// truth; gradle.properties/Podfile are what bare RN CLI projects have
+// instead.
+function detectNewArchitecture(cwd: string): boolean | "unknown" {
+  const appJson = readJsonSafe(join(cwd, "app.json"));
+  const expoConfig = appJson?.expo as Record<string, unknown> | undefined;
+  if (typeof expoConfig?.newArchEnabled === "boolean") {
+    return expoConfig.newArchEnabled;
+  }
+
+  const appConfig = readTextSafe(join(cwd, "app.config.js")) ?? readTextSafe(join(cwd, "app.config.ts"));
+  if (appConfig) {
+    if (/newArchEnabled\s*:\s*true/.test(appConfig)) return true;
+    if (/newArchEnabled\s*:\s*false/.test(appConfig)) return false;
+  }
+
+  const gradleProperties = readTextSafe(join(cwd, "android", "gradle.properties"));
+  if (gradleProperties) {
+    if (/newArchEnabled\s*=\s*true/.test(gradleProperties)) return true;
+    if (/newArchEnabled\s*=\s*false/.test(gradleProperties)) return false;
+  }
+
+  const podfile = readTextSafe(join(cwd, "ios", "Podfile"));
+  if (podfile && /RCT_NEW_ARCH_ENABLED['"]?\]?\s*\|?\|?=\s*['"]?1['"]?/.test(podfile)) {
+    return true;
+  }
+
+  return "unknown";
+}
+
+function detectReactCompiler(cwd: string): boolean {
+  const babelConfig =
+    readTextSafe(join(cwd, "babel.config.js")) ?? readTextSafe(join(cwd, "babel.config.ts")) ?? "";
+  return /react-compiler/i.test(babelConfig);
+}
+
+interface ProjectInspection {
+  framework: "expo" | "bare-rn-cli" | "unknown";
+  expoRouter: boolean;
+  reactNativeVersion: string;
+  expoVersion: string;
+  newArchitecture: boolean | "unknown";
+  reactCompiler: boolean;
+  reactNativeWeb: boolean;
+  packageManager: "npm" | "yarn" | "pnpm" | "bun" | "unknown";
+  typescript: boolean;
+  jest: boolean;
+}
+
+function inspectProject(cwd: string): ProjectInspection {
+  const pkg = readJsonSafe(join(cwd, "package.json")) ?? {};
+  const deps: Record<string, string> = {
+    ...(pkg.dependencies as Record<string, string> | undefined),
+    ...(pkg.devDependencies as Record<string, string> | undefined),
+  };
+
+  const hasExpo = "expo" in deps;
+  const hasReactNative = "react-native" in deps;
+
+  return {
+    framework: hasExpo ? "expo" : hasReactNative ? "bare-rn-cli" : "unknown",
+    expoRouter: "expo-router" in deps,
+    reactNativeVersion: deps["react-native"] ?? "unknown",
+    expoVersion: deps["expo"] ?? "unknown",
+    newArchitecture: detectNewArchitecture(cwd),
+    reactCompiler: detectReactCompiler(cwd),
+    reactNativeWeb: "react-native-web" in deps,
+    packageManager: detectPackageManager(cwd),
+    typescript: "typescript" in deps || existsSync(join(cwd, "tsconfig.json")),
+    jest: "jest" in deps || "jest" in pkg,
+  };
 }
 
 const resources = collectResources(resourcesRoot, resourcesRoot);
@@ -159,6 +257,24 @@ server.registerTool(
   },
 );
 
+server.registerTool(
+  "inspect_project",
+  {
+    title: "Inspect the current project",
+    description:
+      "Best-effort detection of the calling project's RN/Expo setup (framework, Expo Router, RN/Expo versions, New Architecture, React Compiler, package manager, TypeScript, Jest) from files in the current working directory — so conventions apply based on what's actually there instead of assumed.",
+    inputSchema: {},
+  },
+  async () => ({
+    content: [
+      {
+        type: "text",
+        text: JSON.stringify(inspectProject(process.cwd()), null, 2),
+      },
+    ],
+  }),
+);
+
 server.registerPrompt(
   "bootstrap-new-project",
   {
@@ -179,8 +295,11 @@ server.registerPrompt(
           type: "text",
           text: `Set up this new ${projectType} project using the rn-conventions MCP server:
 
-1. Read rn-conventions://docs/architecture-baseline.md first. New
-   Architecture is assumed on; ask whether React Compiler will be used
+1. Call inspect_project first to establish facts about this repo
+   (framework, Expo Router, RN/Expo versions, New Architecture, React
+   Compiler, package manager, TypeScript, Jest). Then read
+   rn-conventions://docs/architecture-baseline.md for the reasoning
+   behind these; if React Compiler's presence came back unclear, ask
    before writing any memoization-related tooling or docs.
 2. Pull and adapt the matching tooling templates for "${projectType}":
    eslint config, oxlintrc.json, oxfmtrc.json, and the matching knip
@@ -229,15 +348,17 @@ server.registerPrompt(
 conventions, then propose changes — don't apply anything destructively
 without confirming first.
 
-1. Read the project's actual files first: package.json, existing lint/
-   format/CI config, CLAUDE.md (or README/ARCHITECTURE.md), and any
-   .cursor/rules or copilot-instructions. Don't assume anything from
-   the templates that isn't grounded in what's actually here.
-2. Read rn-conventions://docs/architecture-baseline.md and determine:
-   is New Architecture actually on (gradle.properties/Podfile/app.json)?
-   Is React Compiler present (babel.config.js, package.json)? State
-   both explicitly before touching any memoization- or native-module-
-   related convention.
+1. Call inspect_project for a quick baseline (framework, RN/Expo
+   versions, New Architecture, React Compiler, TypeScript/Jest presence,
+   package manager), then still read the project's actual files for
+   anything it doesn't cover: existing lint/format/CI config, CLAUDE.md
+   (or README/ARCHITECTURE.md), and any .cursor/rules or
+   copilot-instructions. Don't assume anything from the templates that
+   isn't grounded in what's actually here.
+2. Read rn-conventions://docs/architecture-baseline.md for the reasoning
+   behind the New Architecture / React Compiler facts inspect_project
+   returned. State both explicitly before touching any memoization- or
+   native-module-related convention.
 3. Diff the project's current oxlint/eslint/oxfmt/knip/CI setup against
    this server's tooling templates (call list_conventions with category
    "tooling" and "ci"). Report gaps and divergences — don't overwrite
