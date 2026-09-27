@@ -45,7 +45,10 @@ resources/
 
 Every file under `resources/` is exposed as an MCP resource at
 `rn-conventions://<category>/<filename>`. A `list_conventions` tool lists
-them, optionally filtered by `category` (`docs` | `tooling` | `ci`).
+them, optionally filtered by `category` (`docs` | `tooling` | `ci`), and
+a `get_convention` tool returns one resource's full text by `id` — useful
+for MCP clients where reading a resource directly is less reliable than
+a tool call.
 
 Two MCP prompts drive the two actual workflows this server is for:
 - `bootstrap-new-project` (arg: `projectType` —
